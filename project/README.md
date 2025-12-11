@@ -105,7 +105,3 @@ The application uses a deep learning model trained on millions of images to pred
 ## License
 
 This project is for educational purposes.
-
-## Credits
-
-Colorization model based on research by Richard Zhang, Phillip Isola, and Alexei A. Efros.
