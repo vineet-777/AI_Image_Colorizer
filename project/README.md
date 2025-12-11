@@ -2,6 +2,14 @@
 
 A Flask-based web application that uses deep learning to automatically colorize black and white images.
 
+## About This Project
+
+**VTU 5th Semester Mini Project**
+
+### Project Overview
+This project demonstrates **"Image Colour Restoration using Deep Learning (CNN)"** and provides a user-friendly dashboard to upload, process, and view restored images.  
+The objective is to restore colors in faded or grayscale images using a trained Convolutional Neural Network model, showcasing the practical application of deep learning techniques.
+
 ## Features
 
 - Upload black & white images
