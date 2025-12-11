@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AI Image Colorizer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #1f1f1f, #3a3a3a, #5a5a5a);
+            background-size: 300% 300%;
+            animation: gradientMove 10s ease infinite;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 0 20px rgba(255,255,255,0.2);
+            animation: fadeIn 2s ease;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.4);
+            width: 90%;
+            max-width: 800px;
+            text-align: center;
+            animation: slideUp 1.5s ease;
+            position: relative;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(40px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        input[type="file"] {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ddd;
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            padding: 1rem;
+            width: 100%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        input[type="file"]:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: #00bfff;
+        }
+
+        button {
+            margin-top: 1rem;
+            padding: 0.8rem 2rem;
+            font-size: 1rem;
+            border: none;
+            border-radius: 30px;
+            background: linear-gradient(90deg, #00bfff, #5ac8fa);
+            color: white;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            box-shadow: 0 0 15px rgba(0, 191, 255, 0.4);
+        }
+
+        button:hover {
+            background: linear-gradient(90deg, #5ac8fa, #00bfff);
+            transform: scale(1.05);
+            box-shadow: 0 0 25px rgba(0, 191, 255, 0.6);
+        }
+
+        .images {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 2rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .image-container {
+            position: relative;
+            overflow: hidden;
+            animation: fadeIn 1.5s ease;
+        }
+
+        img {
+            width: 350px;
+            max-width: 100%;
+            border-radius: 20px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.4);
+            transition: transform 0.8s ease, opacity 1s ease, box-shadow 0.4s ease;
+        }
+
+        img:hover {
+            transform: scale(1.03);
+            box-shadow: 0 0 40px rgba(0,191,255,0.5);
+        }
+
+        h3 {
+            margin-top: 0.5rem;
+            color: #ddd;
+            font-weight: 400;
+        }
+
+        /* Loader */
+        #loader {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .spinner {
+            border: 6px solid rgba(255,255,255,0.1);
+            border-top: 6px solid #00bfff;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        footer {
+            margin-top: 2rem;
+            font-size: 0.9rem;
+            color: #aaa;
+            text-align: center;
+        }
+
+        footer span {
+            color: #00bfff;
+        }
+
+        /* Download Button */
+        .download-btn {
+            display: inline-block;
+            margin-top: 1rem;
+            padding: 0.6rem 1.5rem;
+            background: linear-gradient(90deg, #00bfff, #5ac8fa);
+            color: #fff;
+            border-radius: 25px;
+            text-decoration: none;
+            transition: 0.3s ease;
+        }
+
+        .download-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px rgba(0, 191, 255, 0.6);
+        }
+    </style>
+
+    <script>
+        // Show loader animation when form is submitted
+        function showLoader() {
+            document.getElementById('loader').style.display = 'block';
+        }
+    </script>
+</head>
+
+<body>
+    <h1>AI Colorizer — Bring Life to Black & White Images</h1>
+
+    <div class="card">
+        <form action="/upload" method="post" enctype="multipart/form-data" onsubmit="showLoader()">
+            <input type="file" name="file" required>
+            <button type="submit">Upload & Colorize</button>
+        </form>
+
+        <div id="loader">
+            <div class="spinner"></div>
+            <p style="margin-top: 1rem; color:#ccc;">Colorizing... Please wait</p>
+        </div>
+
+        {% if original_image and colorized_image %}
+        <div class="images">
+            <div class="image-container">
+                <h3>Original Image</h3>
+                <img src="{{ original_image }}" alt="Original Image">
+            </div>
+            <div class="image-container">
+                <h3>Colorized Image</h3>
+                <img src="{{ colorized_image }}" alt="Colorized Image">
+                <a class="download-btn" href="{{ colorized_image }}" download>Download</a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <footer>
+        <p>Made with ❤️ by <span>AI Colorizer</span></p>
+    </footer>
+</body>
+</html>

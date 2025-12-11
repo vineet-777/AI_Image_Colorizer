@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - AI Colorizer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+            color: #fff;
+        }
+
+        .navbar {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .user-name {
+            color: #e2e8f0;
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .btn-logout {
+            padding: 10px 20px;
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 10px;
+            color: #fca5a5;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .btn-logout:hover {
+            background: rgba(239, 68, 68, 0.25);
+            transform: translateY(-2px);
+        }
+
+        .nav-link {
+            color: #e2e8f0;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 10px 16px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            background: rgba(6, 182, 212, 0.15);
+            color: #06b6d4;
+        }
+
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 48px 32px;
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        h1 {
+            font-size: 42px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: #94a3b8;
+            font-size: 18px;
+        }
+
+        .upload-section {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+            border-radius: 24px;
+            padding: 48px;
+            margin-bottom: 48px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .upload-section:hover {
+            border-color: #06b6d4;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .upload-icon {
+            font-size: 64px;
+            margin-bottom: 24px;
+            opacity: 0.8;
+        }
+
+        .upload-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .upload-description {
+            color: #94a3b8;
+            margin-bottom: 32px;
+            font-size: 15px;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        input[type="file"] {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .btn-upload {
+            padding: 16px 32px;
+            background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+            border: none;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .btn-upload:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(6, 182, 212, 0.4);
+        }
+
+        .selected-file {
+            margin-top: 16px;
+            color: #06b6d4;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .flash-messages {
+            margin-bottom: 32px;
+        }
+
+        .flash {
+            padding: 16px 24px;
+            border-radius: 12px;
+            font-size: 15px;
+            margin-bottom: 16px;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .flash.success {
+            background: rgba(34, 197, 94, 0.15);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            color: #86efac;
+        }
+
+        .flash.error {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+        }
+
+        .flash.warning {
+            background: rgba(245, 158, 11, 0.15);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            color: #fcd34d;
+        }
+
+        .gallery-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .gallery-title {
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .gallery-count {
+            color: #94a3b8;
+            font-size: 15px;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 24px;
+            margin-bottom: 48px;
+        }
+
+        .image-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .image-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border-color: rgba(6, 182, 212, 0.3);
+        }
+
+        .image-comparison {
+            position: relative;
+            width: 100%;
+            height: 240px;
+            display: flex;
+        }
+
+        .image-half {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .image-half img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .image-label {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            padding: 6px 12px;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .image-info {
+            padding: 20px;
+        }
+
+        .image-filename {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #e2e8f0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .image-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .image-date {
+            font-size: 13px;
+            color: #94a3b8;
+        }
+
+        .image-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-download,
+        .btn-delete {
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            border: none;
+        }
+
+        .btn-download {
+            background: rgba(6, 182, 212, 0.15);
+            color: #06b6d4;
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            flex: 1;
+        }
+
+        .btn-download:hover {
+            background: rgba(6, 182, 212, 0.25);
+            transform: translateY(-2px);
+        }
+
+        .btn-delete {
+            background: rgba(239, 68, 68, 0.15);
+            color: #fca5a5;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-delete:hover {
+            background: rgba(239, 68, 68, 0.25);
+            transform: translateY(-2px);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 80px 32px;
+            color: #94a3b8;
+        }
+
+        .empty-icon {
+            font-size: 80px;
+            margin-bottom: 24px;
+            opacity: 0.5;
+        }
+
+        .empty-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #e2e8f0;
+        }
+
+        .empty-description {
+            font-size: 16px;
+        }
+
+        @media (max-width: 768px) {
+            .navbar-content {
+                padding: 0 20px;
+            }
+
+            .main-content {
+                padding: 32px 20px;
+            }
+
+            h1 {
+                font-size: 32px;
+            }
+
+            .upload-section {
+                padding: 32px 20px;
+            }
+
+            .gallery-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .gallery-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-content">
+            <div class="logo">
+                <div class="logo-icon">🎨</div>
+                <span>Image Color Restoration Using DL</span>
+            </div>
+            <div class="user-section">
+                <a href="{{ url_for('about') }}" class="nav-link">About</a>
+                <span class="user-name">{{ user_name }}</span>
+                <a href="{{ url_for('logout') }}" class="btn-logout">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-content">
+        <div class="header-section">
+            <h1>Transform Your Images</h1>
+            <p class="subtitle">Bring life to black and white photos with AI-powered colorization</p>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="flash {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <div class="upload-section">
+            <div class="upload-icon">📸</div>
+            <h2 class="upload-title">Upload Your Image</h2>
+            <p class="upload-description">Drag and drop or click to select a black and white image</p>
+            <form method="POST" action="{{ url_for('upload') }}" enctype="multipart/form-data" id="uploadForm">
+                <div class="file-input-wrapper">
+                    <input type="file" name="file" id="fileInput" accept="image/*" required onchange="handleFileSelect(this)">
+                    <label for="fileInput" class="btn-upload">Choose Image</label>
+                </div>
+                <div id="selectedFile" class="selected-file"></div>
+            </form>
+        </div>
+
+        {% if images %}
+        <div class="gallery-header">
+            <h2 class="gallery-title">Your Gallery</h2>
+            <span class="gallery-count">{{ images|length }} image{% if images|length != 1 %}s{% endif %}</span>
+        </div>
+
+        <div class="gallery-grid">
+            {% for image in images %}
+            <div class="image-card">
+                <div class="image-comparison">
+                    <div class="image-half">
+                        <img src="{{ url_for('static', filename=image.original_image_path) }}" alt="Original">
+                        <span class="image-label">Original</span>
+                    </div>
+                    <div class="image-half">
+                        <img src="{{ url_for('static', filename=image.colorized_image_path) }}" alt="Colorized">
+                        <span class="image-label">Colorized</span>
+                    </div>
+                </div>
+                <div class="image-info">
+                    <div class="image-filename">{{ image.original_filename }}</div>
+                    <div class="image-meta">
+                        <span class="image-date">{{ image.created_at[:10] }}</span>
+                    </div>
+                    <div class="image-actions">
+                        <a href="{{ url_for('static', filename=image.colorized_image_path) }}" download class="btn-download">Download</a>
+                        <form method="POST" action="{{ url_for('delete_image', image_id=image.id) }}" style="display: inline;">
+                            <button type="submit" class="btn-delete" onclick="return confirm('Delete this image?')">Delete</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">🖼️</div>
+            <h3 class="empty-title">No Images Yet</h3>
+            <p class="empty-description">Upload your first image to get started</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        function handleFileSelect(input) {
+            const file = input.files[0];
+            if (file) {
+                document.getElementById('selectedFile').textContent = `Selected: ${file.name}`;
+                document.getElementById('uploadForm').submit();
+            }
+        }
+    </script>
+</body>
+</html>
